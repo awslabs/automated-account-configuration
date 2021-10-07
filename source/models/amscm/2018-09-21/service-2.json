@@ -1,0 +1,1304 @@
+{
+  "version":"2.0",
+  "metadata":{
+    "apiVersion":"2018-09-21",
+    "endpointPrefix":"amscm",
+    "jsonVersion":"1.1",
+    "protocol":"json",
+    "serviceAbbreviation":"amscm",
+    "serviceFullName":"AWS Managed Services Change Management",
+    "serviceId":"AmsCm",
+    "signatureVersion":"v4",
+    "signingName":"amscm",
+    "targetPrefix":"AWSEnergonService",
+    "uid":"amscm-2018-09-21"
+  },
+  "operations":{
+    "ApproveRfc":{
+      "name":"ApproveRfc",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"ApproveRfcRequest"},
+      "output":{"shape":"ApproveRfcResponse"},
+      "errors":[
+        {"shape":"InternalServerError"},
+        {"shape":"InvalidArgumentException"},
+        {"shape":"InvalidRfcStateException"},
+        {"shape":"ResourceNotFoundException"}
+      ],
+      "documentation":"<p>Marks the specified RFC as approved.</p> <p>An RFC with a CT of \"Execution mode: Manual\" requires approval; rarely it requires customer response, either approval or rejection. If your response is explicitly required, the <code>Approval Status: CustomerApproval Pending</code> RFC status is in the RFC execution output, but you receive no other notice. You must explicitly reject or approve the RFC by running this operation or the RejectRfc operation.</p>"
+    },
+    "CancelRfc":{
+      "name":"CancelRfc",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"CancelRfcRequest"},
+      "output":{"shape":"CancelRfcResponse"},
+      "errors":[
+        {"shape":"InternalServerError"},
+        {"shape":"InvalidArgumentException"},
+        {"shape":"InvalidRfcStateException"},
+        {"shape":"ResourceNotFoundException"}
+      ],
+      "documentation":"<p>Cancels the specified RFC.</p>"
+    },
+    "CreateRfc":{
+      "name":"CreateRfc",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"CreateRfcRequest"},
+      "output":{"shape":"CreateRfcResponse"},
+      "errors":[
+        {"shape":"InternalServerError"},
+        {"shape":"InvalidArgumentException"}
+      ],
+      "documentation":"<p>Creates a new RFC.</p> <p>To create a request for change, begin by calling <a>CreateRfc</a>. After creating the basic RFC and before submitting it, you can add or update information (<code>Description</code>, <code>ExpectedOutcome</code>, <code>ImplementationPlan</code>, <code>RollbackPlan</code>, and <code>WorstCaseScenario</code>) by using the <code>UpdateRfc</code> operation (<a>UpdateRfc</a>).</p> <p>When all necessary information has been added, use <a>SubmitRfc</a> to activate the RFC.</p> <important> <p>Although only the change type (<code>ChangeTypeId</code> and <code>ChangeTypeVersion</code>) and <code>Title</code> are required to initially create an RFC, you must provide values for these fields (either in the original <a>CreateRfc</a> call or by using the corresponding <code>UpdateRfc</code> (<a>UpdateRfc</a> operation) before calling <a>SubmitRfc</a>:</p> <ul> <li> <p> <code>RequestedStartTime</code> (<a>CreateRfc</a> and <code>RequestedEndTime</code>, if you want to schedule the RFC. If scheduling is unimportant, leave off these values and execution begins as soon as the RFC is approved. This is part of a feature known as ASAP, or un-scheduled RFC.</p> </li> <li> <p> <code>ExecutionParameters</code> that comply with the JSON <code>ExecutionInputSchema</code> of the change type that is associated with the RFC (<a>CreateRfc</a> or <a>UpdateRfc</a>)</p> </li> </ul> </important> <p>For more information and examples, see <a href=\"http://docs.aws.amazon.com/managedservices/latest/userguide/change-mgmt.html\">Change Management</a> in the <i>AWS Managed Services User Guide</i>.</p>"
+    },
+    "GetChangeTypeVersion":{
+      "name":"GetChangeTypeVersion",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"GetChangeTypeVersionRequest"},
+      "output":{"shape":"GetChangeTypeVersionResponse"},
+      "errors":[
+        {"shape":"InternalServerError"},
+        {"shape":"InvalidArgumentException"},
+        {"shape":"ResourceNotFoundException"}
+      ],
+      "documentation":"<p>Returns information about the specified change type; optionally, you can specify a change type version identifier. By default, the most recent version of the change type is returned.</p> <p>The information returned includes:</p> <ul> <li> <p>Execution approval requirements (<code>ApprovalCondition</code>)</p> </li> <li> <p>Whether execution of the change is automated or manual (<code>AutomationStatus</code>)</p> </li> <li> <p>Change type deprecation information (<code>DeprecationMessage</code> and <code>DeprecationTime</code>)</p> </li> <li> <p>An estimate of the time required for execution of the change (<code>ExpectedExecutionDurationInMinutes</code>)</p> </li> <li> <p>The parameters that can be specified for the change (<code>ExecutionInputSchema</code>)</p> </li> </ul> <p>For more information and examples, see <a href=\"http://docs.aws.amazon.com/managedservices/latest/userguide/understanding-cts.html\">Understanding Change Types</a> in the <i>AWS Managed Services User Guide</i>.</p>"
+    },
+    "GetRfc":{
+      "name":"GetRfc",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"GetRfcRequest"},
+      "output":{"shape":"GetRfcResponse"},
+      "errors":[
+        {"shape":"InternalServerError"},
+        {"shape":"InvalidArgumentException"},
+        {"shape":"ResourceNotFoundException"}
+      ],
+      "documentation":"<p>Returns information about the specified RFC ID.</p>"
+    },
+    "ListChangeTypeCategories":{
+      "name":"ListChangeTypeCategories",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"ListChangeTypeCategoriesRequest"},
+      "output":{"shape":"ListChangeTypeCategoriesResponse"},
+      "errors":[
+        {"shape":"InternalServerError"},
+        {"shape":"InvalidArgumentException"}
+      ],
+      "documentation":"<p>Returns the available change type category values.</p>"
+    },
+    "ListChangeTypeClassificationSummaries":{
+      "name":"ListChangeTypeClassificationSummaries",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"ListChangeTypeClassificationSummariesRequest"},
+      "output":{"shape":"ListChangeTypeClassificationSummariesResponse"},
+      "errors":[
+        {"shape":"InternalServerError"},
+        {"shape":"InvalidArgumentException"}
+      ],
+      "documentation":"<p>Returns the classifications (category, subcategory, item, and operation) for all change types that meet the specified (optional) filter criteria.</p>"
+    },
+    "ListChangeTypeItems":{
+      "name":"ListChangeTypeItems",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"ListChangeTypeItemsRequest"},
+      "output":{"shape":"ListChangeTypeItemsResponse"},
+      "errors":[
+        {"shape":"InternalServerError"},
+        {"shape":"InvalidArgumentException"}
+      ],
+      "documentation":"<p>Returns the available change type item values for the specified category and subcategory values.</p>"
+    },
+    "ListChangeTypeOperations":{
+      "name":"ListChangeTypeOperations",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"ListChangeTypeOperationsRequest"},
+      "output":{"shape":"ListChangeTypeOperationsResponse"},
+      "errors":[
+        {"shape":"InternalServerError"},
+        {"shape":"InvalidArgumentException"}
+      ],
+      "documentation":"<p>Returns the available change type operation values for the specified category and subcategory values.</p>"
+    },
+    "ListChangeTypeSubcategories":{
+      "name":"ListChangeTypeSubcategories",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"ListChangeTypeSubcategoriesRequest"},
+      "output":{"shape":"ListChangeTypeSubcategoriesResponse"},
+      "errors":[
+        {"shape":"InternalServerError"},
+        {"shape":"InvalidArgumentException"}
+      ],
+      "documentation":"<p>Returns the available change type subcategory values for the specified category value.</p>"
+    },
+    "ListChangeTypeVersionSummaries":{
+      "name":"ListChangeTypeVersionSummaries",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"ListChangeTypeVersionSummariesRequest"},
+      "output":{"shape":"ListChangeTypeVersionSummariesResponse"},
+      "errors":[
+        {"shape":"InternalServerError"},
+        {"shape":"InvalidArgumentException"}
+      ],
+      "documentation":"<p>Returns version information (versions and deprecation times) for the specified change type.</p>"
+    },
+    "ListRestrictedExecutionTimes":{
+      "name":"ListRestrictedExecutionTimes",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"ListRestrictedExecutionTimesRequest"},
+      "output":{"shape":"ListRestrictedExecutionTimesResponse"},
+      "errors":[
+        {"shape":"InternalServerError"},
+        {"shape":"InvalidArgumentException"}
+      ],
+      "documentation":"<p>Returns the time ranges during which change execution is restricted.</p>"
+    },
+    "ListRfcSummaries":{
+      "name":"ListRfcSummaries",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"ListRfcSummariesRequest"},
+      "output":{"shape":"ListRfcSummariesResponse"},
+      "errors":[
+        {"shape":"InternalServerError"},
+        {"shape":"InvalidArgumentException"}
+      ],
+      "documentation":"<p>Returns summaries of RFCs that meet the specified criteria.</p>"
+    },
+    "RejectRfc":{
+      "name":"RejectRfc",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"RejectRfcRequest"},
+      "output":{"shape":"RejectRfcResponse"},
+      "errors":[
+        {"shape":"InternalServerError"},
+        {"shape":"InvalidArgumentException"},
+        {"shape":"InvalidRfcStateException"},
+        {"shape":"ResourceNotFoundException"}
+      ],
+      "documentation":"<p>Marks the specified RFC as rejected. The alternate operation to <code>ApproveRfc</code>.</p> <p>An RFC with a CT of \"Execution mode: Manual\" requires approval; rarely it requires customer response, either approval or rejection. If your response is explicitly required, the <code>Approval Status: CustomerApproval Pending</code> RFC status is in the RFC execution output, but you receive no other notice. You must explicitly reject or approve the RFC by running this operation or the ApproveRfc operation.</p>"
+    },
+    "SubmitRfc":{
+      "name":"SubmitRfc",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"SubmitRfcRequest"},
+      "output":{"shape":"SubmitRfcResponse"},
+      "errors":[
+        {"shape":"InternalServerError"},
+        {"shape":"InvalidArgumentException"},
+        {"shape":"InvalidRfcScheduleException"},
+        {"shape":"InvalidRfcStateException"},
+        {"shape":"ResourceNotFoundException"}
+      ],
+      "documentation":"<p>Submits the specified RFC, and optionally specifies whether to observe default execution settings.</p>"
+    },
+    "UpdateRestrictedExecutionTimes":{
+      "name":"UpdateRestrictedExecutionTimes",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"UpdateRestrictedExecutionTimesRequest"},
+      "output":{"shape":"UpdateRestrictedExecutionTimesResponse"},
+      "errors":[
+        {"shape":"InternalServerError"},
+        {"shape":"InvalidArgumentException"}
+      ],
+      "documentation":"<p>Replaces the existing times when change execution is restricted. </p>"
+    },
+    "UpdateRfc":{
+      "name":"UpdateRfc",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"UpdateRfcRequest"},
+      "output":{"shape":"UpdateRfcResponse"},
+      "errors":[
+        {"shape":"InternalServerError"},
+        {"shape":"InvalidArgumentException"},
+        {"shape":"InvalidRfcStateException"},
+        {"shape":"ResourceNotFoundException"}
+      ],
+      "documentation":"<p>Updates settings for the specified RFC ID. Updates non-null values.</p>"
+    }
+  },
+  "shapes":{
+    "ApproveRfcRequest":{
+      "type":"structure",
+      "required":["RfcId"],
+      "members":{
+        "RfcId":{
+          "shape":"string",
+          "documentation":"<p>The unique ID (UUID) of the RFC to approve.</p>"
+        }
+      },
+      "documentation":"<p>The parameters for the <a>ApproveRfc</a> operation.</p>"
+    },
+    "ApproveRfcResponse":{
+      "type":"structure",
+      "members":{
+      },
+      "documentation":"<p>The response to the <a>ApproveRfc</a> operation.</p>"
+    },
+    "AutomationStatus":{
+      "type":"structure",
+      "members":{
+        "Id":{"shape":"string"},
+        "Name":{"shape":"string"}
+      },
+      "documentation":"<p>Whether the change type is automated or manual.</p>"
+    },
+    "CancelRfcRequest":{
+      "type":"structure",
+      "required":[
+        "Reason",
+        "RfcId"
+      ],
+      "members":{
+        "Reason":{
+          "shape":"sensitivestring",
+          "documentation":"<p>The reason for the cancellation.</p> <p>If an RFC is rejected or canceled, the reason for the action appears in the <code>RfcReason</code>.</p>"
+        },
+        "RfcId":{
+          "shape":"string",
+          "documentation":"<p>The unique ID (UUID) of the RFC to cancel.</p>"
+        }
+      },
+      "documentation":"<p>The parameters for the <a>ApproveRfc</a> operation.</p>"
+    },
+    "CancelRfcResponse":{
+      "type":"structure",
+      "members":{
+      },
+      "documentation":"<p>The response to the <a>ApproveRfc</a> operation.</p>"
+    },
+    "ChangeTypeApprovalCondition":{
+      "type":"structure",
+      "members":{
+        "AwsApproval":{
+          "shape":"ChangeTypeApprovalRequirement",
+          "documentation":"<p>The approvals that are required from AWS for the execution of a change type.</p>"
+        },
+        "CustomerApproval":{
+          "shape":"ChangeTypeApprovalRequirement",
+          "documentation":"<p>The approvals that are required from the customer for the execution of a change type.</p>"
+        }
+      },
+      "documentation":"<p>The approvals that are required for the execution of a change type.</p>"
+    },
+    "ChangeTypeApprovalRequirement":{
+      "type":"structure",
+      "members":{
+        "Id":{
+          "shape":"string",
+          "documentation":"<p>The ID of the kind of approval required. Possible values: <code>Required</code> | <code>NotRequired</code> </p>"
+        },
+        "Name":{
+          "shape":"string",
+          "documentation":"<p>The description of the kind of approval required.</p>"
+        }
+      },
+      "documentation":"<p>The kind of approval that is required for the execution of a change type.</p>"
+    },
+    "ChangeTypeAutomationStatus":{
+      "type":"structure",
+      "members":{
+        "Id":{
+          "shape":"string",
+          "documentation":"<p>The ID of the automation status of a change type. Possible values: <code>Automated</code> | <code>Manual</code> </p>"
+        },
+        "Name":{
+          "shape":"string",
+          "documentation":"<p>The description of the automation status (<code>Automated</code> or <code>Manual</code>).</p>"
+        }
+      },
+      "documentation":"<p>The automation status of a change type (<code>Automated</code> or <code>Manual</code>).</p>"
+    },
+    "ChangeTypeCategories":{
+      "type":"list",
+      "member":{"shape":"string"}
+    },
+    "ChangeTypeClassificationSummaries":{
+      "type":"list",
+      "member":{"shape":"ChangeTypeClassificationSummary"}
+    },
+    "ChangeTypeClassificationSummary":{
+      "type":"structure",
+      "members":{
+        "Category":{
+          "shape":"string",
+          "documentation":"<p>The category value of the change type.</p>"
+        },
+        "ChangeTypeId":{
+          "shape":"string",
+          "documentation":"<p>The unique ID of the change type, in the form ct-2ty5seo8rxfsc.</p>"
+        },
+        "Item":{
+          "shape":"string",
+          "documentation":"<p>The item value of the change type.</p>"
+        },
+        "Operation":{
+          "shape":"string",
+          "documentation":"<p>The operation value of the change type.</p>"
+        },
+        "Subcategory":{
+          "shape":"string",
+          "documentation":"<p>The subcategory value of the change type.</p>"
+        }
+      },
+      "documentation":"<p>The category, subcategory, item, and operation values of a change type.</p>"
+    },
+    "ChangeTypeItems":{
+      "type":"list",
+      "member":{"shape":"string"}
+    },
+    "ChangeTypeOperationSummaries":{
+      "type":"list",
+      "member":{"shape":"ChangeTypeOperationSummary"}
+    },
+    "ChangeTypeOperationSummary":{
+      "type":"structure",
+      "members":{
+        "Operation":{
+          "shape":"string",
+          "documentation":"<p>The operation value of the corresponding change type.</p>"
+        },
+        "ChangeTypeId":{
+          "shape":"string",
+          "documentation":"<p>The ID of the change type that has the corresponding operation value.</p>"
+        }
+      },
+      "documentation":"<p>The operation values and change type IDs for a particular category, subcategory, and item value.</p>"
+    },
+    "ChangeTypeSubcategories":{
+      "type":"list",
+      "member":{"shape":"string"}
+    },
+    "ChangeTypeVersion":{
+      "type":"structure",
+      "members":{
+        "ApprovalCondition":{
+          "shape":"ChangeTypeApprovalCondition",
+          "documentation":"<p>The approval requirements for the change type version.</p>"
+        },
+        "AutomationStatus":{
+          "shape":"ChangeTypeAutomationStatus",
+          "documentation":"<p>The automation status (<code>Automated</code> or <code>Manual</code>) of the change type version.</p>"
+        },
+        "ChangeTypeId":{
+          "shape":"string",
+          "documentation":"<p>The unique ID of the change type, in the form ct-2ty5seo8rxfsc.</p>"
+        },
+        "CreatedTime":{
+          "shape":"datetime",
+          "documentation":"<p>The date and time that the change type version was created.</p>"
+        },
+        "DeprecationMessage":{
+          "shape":"string",
+          "documentation":"<p>Information about the reasons for deprecating the change type version.</p>"
+        },
+        "DeprecationTime":{
+          "shape":"datetime",
+          "documentation":"<p>The date and time that the change type version was deprecated.</p>"
+        },
+        "ExecutionInputSchema":{
+          "shape":"string",
+          "documentation":"<p>A JSON schema that describes the parameters for the change type.</p>"
+        },
+        "ExecutionOutputSchema":{
+          "shape":"string",
+          "documentation":"<p>A JSON schema that describes the output for the change type.</p>"
+        },
+        "ExpectedExecutionDurationInMinutes":{
+          "shape":"int",
+          "documentation":"<p>The number of minutes that the change should take to execute.</p>"
+        },
+        "Version":{
+          "shape":"string",
+          "documentation":"<p>The version number for this change type version.</p>"
+        }
+      },
+      "documentation":"<p>Information about a specific version of a change type.</p>"
+    },
+    "ChangeTypeVersionSummaries":{
+      "type":"list",
+      "member":{"shape":"ChangeTypeVersionSummary"}
+    },
+    "ChangeTypeVersionSummary":{
+      "type":"structure",
+      "members":{
+        "ChangeTypeId":{
+          "shape":"string",
+          "documentation":"<p>The unique ID of the change type, in the form ct-2ty5seo8rxfsc.</p>"
+        },
+        "CreatedTime":{
+          "shape":"datetime",
+          "documentation":"<p>The date and time that the change type version was created.</p>"
+        },
+        "DeprecationTime":{
+          "shape":"datetime",
+          "documentation":"<p>The date and time that the change type version was deprecated.</p>"
+        },
+        "Version":{
+          "shape":"string",
+          "documentation":"<p>The version number for this change type version.</p>"
+        }
+      },
+      "documentation":"<p>Summary information about a change type version.</p>"
+    },
+    "CreateRfcRequest":{
+      "type":"structure",
+      "required":[
+        "ChangeTypeId",
+        "ChangeTypeVersion",
+        "Title"
+      ],
+      "members":{
+        "ChangeTypeId":{
+          "shape":"string",
+          "documentation":"<p>The unique ID of the change type, in the form ct-2ty5seo8rxfsc.</p>"
+        },
+        "ChangeTypeVersion":{
+          "shape":"string",
+          "documentation":"<p>The version of the change type for the request; for example, \"1.0\".</p>"
+        },
+        "Description":{
+          "shape":"sensitivestring",
+          "documentation":"<p>The description of the RFC.</p>"
+        },
+        "ExecutionParameters":{
+          "shape":"sensitivestring",
+          "documentation":"<p>The parameters that are required to execute the RFC, submitted in JSON format.</p>"
+        },
+        "ExpectedOutcome":{
+          "shape":"sensitivestring",
+          "documentation":"<p>A description of the effects of the change.</p>"
+        },
+        "ImplementationPlan":{
+          "shape":"sensitivestring",
+          "documentation":"<p>The actions or steps required to implement the change (for change types that are not automated).</p>"
+        },
+        "RequestedEndTime":{
+          "shape":"datetime",
+          "documentation":"<p>The end of the change window, expressed in ISO 8601 format. The default format is the <i>basic</i> format (<code>YYYYMMDDThhmmssZ</code>). For example, 2017/02/27 at 2:30 PM would be 20170227T143000Z. An RFC does not fail if the requested end time is exceeded.</p>"
+        },
+        "RequestedStartTime":{
+          "shape":"datetime",
+          "documentation":"<p>The start of the change window, expressed in ISO 8601 format. The default format is the <i>basic</i> format (<code>YYYYMMDDThhmmssZ</code>). For example, 2017/02/27 at 2:10 PM would be 20170227T141000Z. For best results, set the requested start time to at least 20 minutes past the time that you expect to submit the RFC. Alternatively, you can use the ASAP option, which causes the RFC to be executed as soon as it is approved, to use this option, do not specify any start time. If the RFC does not pass syntax or other checks before the requested start time (if one is set), the RFC is canceled.</p>"
+        },
+        "RollbackPlan":{
+          "shape":"sensitivestring",
+          "documentation":"<p>The actions or steps required to undo the change.</p>"
+        },
+        "Title":{
+          "shape":"sensitivestring",
+          "documentation":"<p>A name for the RFC; this is displayed as the subject of the RFC in the AMS console.</p>"
+        },
+        "WorstCaseScenario":{
+          "shape":"sensitivestring",
+          "documentation":"<p>A description of the most unfavorable outcome of the change.</p>"
+        }
+      },
+      "documentation":"<p>The parameters for the <a>CreateRfc</a> operation.</p>"
+    },
+    "CreateRfcResponse":{
+      "type":"structure",
+      "members":{
+        "RfcId":{
+          "shape":"string",
+          "documentation":"<p>The unique ID (UUID) of the RFC that was created.</p>"
+        }
+      },
+      "documentation":"<p>The response to the <a>CreateRfc</a> operation.</p>"
+    },
+    "Filter":{
+      "type":"structure",
+      "required":["Attribute"],
+      "members":{
+        "Attribute":{
+          "shape":"string",
+          "documentation":"<p>The parameter name to filter on.</p>"
+        },
+        "Value":{
+          "shape":"string",
+          "documentation":"<p>The value of the corresponding attribute to use.</p>"
+        },
+        "Values":{"shape":"FilterValues"},
+        "Condition":{"shape":"string"}
+      },
+      "documentation":"<p>An attribute and value pair to use for narrowing search results.</p>"
+    },
+    "FilterValues":{
+      "type":"list",
+      "member":{"shape":"string"}
+    },
+    "Filters":{
+      "type":"list",
+      "member":{"shape":"Filter"}
+    },
+    "GetChangeTypeVersionRequest":{
+      "type":"structure",
+      "required":["ChangeTypeId"],
+      "members":{
+        "ChangeTypeId":{
+          "shape":"string",
+          "documentation":"<p>The unique ID of the change type, in the form ct-2ty5seo8rxfsc.</p>"
+        },
+        "Locale":{
+          "shape":"string",
+          "documentation":"<p>The locale (language) to return information in. The default is English. <b>Note:</b> For future use; not currently implemented.</p>"
+        },
+        "Version":{
+          "shape":"string",
+          "documentation":"<p>The version identifier of the change type to return.</p> <note> <p>If you use the AWS CLI and want to specify a change type version in the request, you must use extra double hyphens (--) to cause the CLI to interpret the <code>--version</code> parameter correctly (and not interpret it as a base AWS CLI option). Any base AWS CLI options and parameters (not specific to the AWS Managed Services API), such as <code>--output</code> or <code>--profile</code>, must appear before the double hyphen. The simplest way to do this is by putting the double hyphens immediately before the <code>get-change-type-version</code> command. For example: <code>aws amscm --output text -- get-change-type-version --version 1.0</code> </p> <p>This special treatment applies only if you specify the parameter on the command line; no special treatment is necessary if you provide parameters in JSON format.</p> </note>"
+        }
+      }
+    },
+    "GetChangeTypeVersionResponse":{
+      "type":"structure",
+      "members":{
+        "ChangeTypeVersion":{
+          "shape":"ChangeTypeVersion",
+          "documentation":"<p>Information about the specified version of the change type.</p>"
+        }
+      }
+    },
+    "GetRfcRequest":{
+      "type":"structure",
+      "required":["RfcId"],
+      "members":{
+        "RfcId":{
+          "shape":"string",
+          "documentation":"<p>The unique ID (UUID) of the RFC</p>"
+        },
+        "Locale":{
+          "shape":"string",
+          "documentation":"<p>The locale (language) to return information in. The default is English. <b>Note:</b> For future use; not currently implemented.</p>"
+        }
+      },
+      "documentation":"<p>The parameters for the <a>GetRfc</a> operation.</p>"
+    },
+    "GetRfcResponse":{
+      "type":"structure",
+      "members":{
+        "Rfc":{
+          "shape":"Rfc",
+          "documentation":"<p>Information about the RFC.</p>"
+        }
+      },
+      "documentation":"<p>The response to the <a>GetRfc</a> operation.</p>"
+    },
+    "InternalServerError":{
+      "type":"structure",
+      "members":{
+        "Message":{"shape":"string"}
+      },
+      "documentation":"<p>An unspecified server error occurred.</p>",
+      "exception":true,
+      "fault":true
+    },
+    "InvalidArgumentException":{
+      "type":"structure",
+      "members":{
+        "Message":{"shape":"string"}
+      },
+      "documentation":"<p>A specified argument is not valid.</p>",
+      "exception":true
+    },
+    "InvalidRfcScheduleException":{
+      "type":"structure",
+      "members":{
+        "Message":{"shape":"string"}
+      },
+      "documentation":"<p>The specified schedule is not valid. Actual status code: 409</p>",
+      "exception":true
+    },
+    "InvalidRfcStateException":{
+      "type":"structure",
+      "members":{
+        "Message":{"shape":"string"}
+      },
+      "documentation":"<p>The RFC is not in a state that allows the requested operation. Actual status code: 409</p>",
+      "exception":true
+    },
+    "ListChangeTypeCategoriesRequest":{
+      "type":"structure",
+      "members":{
+        "Locale":{
+          "shape":"string",
+          "documentation":"<p>The locale (language) to return information in. The default is English. <b>Note:</b> For future use; not currently implemented.</p>"
+        },
+        "MaxResults":{
+          "shape":"int",
+          "documentation":"<p>The maximum number of items to return in one batch. Valid values are 20-100.</p>"
+        },
+        "NextToken":{
+          "shape":"string",
+          "documentation":"<p>If the response contains more items than <code>MaxResults</code>, only <code>MaxResults</code> items are returned, and a <code>NextToken</code> pagination token is returned in the response. To retrieve the next batch of items, reissue the request and include the returned token in the <code>NextToken</code> parameter. When all items have been returned, the response does not contain a pagination token value.</p>"
+        }
+      }
+    },
+    "ListChangeTypeCategoriesResponse":{
+      "type":"structure",
+      "members":{
+        "ChangeTypeCategories":{
+          "shape":"ChangeTypeCategories",
+          "documentation":"<p>The available change type category values.</p>"
+        },
+        "NextToken":{
+          "shape":"string",
+          "documentation":"<p>If the response contains more items than <code>MaxResults</code>, only <code>MaxResults</code> items are returned, and a <code>NextToken</code> pagination token is returned in the response. To retrieve the next batch of items, reissue the request and include the returned token in the <code>NextToken</code> parameter. When all items have been returned, the response does not contain a pagination token value.</p>"
+        }
+      }
+    },
+    "ListChangeTypeClassificationSummariesRequest":{
+      "type":"structure",
+      "members":{
+        "Filters":{
+          "shape":"Filters",
+          "documentation":"<p>Attribute/value pairs to narrow the results returned. Filter criteria are combined in a logical OR operation, and values that contain spaces are also combined in an OR operation. For example, a <code>Value</code> of \"read-only access\" matches all values that contain \"read-only\" OR \"access\". Valid filter attributes: <code>Category</code>, <code>Subcategory</code>, <code>Item</code>, <code>Operation</code>, <code>ChangeTypeId</code>.</p>"
+        },
+        "Locale":{
+          "shape":"string",
+          "documentation":"<p>The locale (language) to return information in. The default is English. <b>Note:</b> For future use; not currently implemented.</p>"
+        },
+        "MaxResults":{
+          "shape":"int",
+          "documentation":"<p>The maximum number of items to return in one batch. Valid values are 20-100.</p>"
+        },
+        "NextToken":{
+          "shape":"string",
+          "documentation":"<p>If the response contains more items than <code>MaxResults</code>, only <code>MaxResults</code> items are returned, and a <code>NextToken</code> pagination token is returned in the response. To retrieve the next batch of items, reissue the request and include the returned token in the <code>NextToken</code> parameter. When all items have been returned, the response does not contain a pagination token value.</p>"
+        }
+      }
+    },
+    "ListChangeTypeClassificationSummariesResponse":{
+      "type":"structure",
+      "members":{
+        "ChangeTypeClassificationSummaries":{
+          "shape":"ChangeTypeClassificationSummaries",
+          "documentation":"<p>The change type classifications that satisfy the filter criteria.</p>"
+        },
+        "NextToken":{
+          "shape":"string",
+          "documentation":"<p>If the response contains more items than <code>MaxResults</code>, only <code>MaxResults</code> items are returned, and a <code>NextToken</code> pagination token is returned in the response. To retrieve the next batch of items, reissue the request and include the returned token in the <code>NextToken</code> parameter. When all items have been returned, the response does not contain a pagination token value.</p>"
+        }
+      }
+    },
+    "ListChangeTypeItemsRequest":{
+      "type":"structure",
+      "required":[
+        "Category",
+        "Subcategory"
+      ],
+      "members":{
+        "Category":{
+          "shape":"string",
+          "documentation":"<p>The change type category value to return the item values for.</p>"
+        },
+        "Locale":{
+          "shape":"string",
+          "documentation":"<p>The locale (language) to return information in. The default is English. <b>Note:</b> For future use; not currently implemented.</p>"
+        },
+        "MaxResults":{
+          "shape":"int",
+          "documentation":"<p>The maximum number of items to return in one batch. Valid values are 20-100.</p>"
+        },
+        "NextToken":{
+          "shape":"string",
+          "documentation":"<p>If the response contains more items than <code>MaxResults</code>, only <code>MaxResults</code> items are returned, and a <code>NextToken</code> pagination token is returned in the response. To retrieve the next batch of items, reissue the request and include the returned token in the <code>NextToken</code> parameter. When all items have been returned, the response does not contain a pagination token value.</p>"
+        },
+        "Subcategory":{
+          "shape":"string",
+          "documentation":"<p>The change type subcategory value to return the item values for.</p>"
+        }
+      }
+    },
+    "ListChangeTypeItemsResponse":{
+      "type":"structure",
+      "members":{
+        "ChangeTypeItems":{
+          "shape":"ChangeTypeItems",
+          "documentation":"<p>The change type item values for the specified category and subcategory values.</p>"
+        },
+        "NextToken":{
+          "shape":"string",
+          "documentation":"<p>If the response contains more items than <code>MaxResults</code>, only <code>MaxResults</code> items are returned, and a <code>NextToken</code> pagination token is returned in the response. To retrieve the next batch of items, reissue the request and include the returned token in the <code>NextToken</code> parameter. When all items have been returned, the response does not contain a pagination token value.</p>"
+        }
+      }
+    },
+    "ListChangeTypeOperationsRequest":{
+      "type":"structure",
+      "required":[
+        "Category",
+        "Item",
+        "Subcategory"
+      ],
+      "members":{
+        "Category":{
+          "shape":"string",
+          "documentation":"<p>The change type category value to return the operation values for.</p>"
+        },
+        "Locale":{
+          "shape":"string",
+          "documentation":"<p>The locale (language) to return information in. The default is English. <b>Note:</b> For future use; not currently implemented.</p>"
+        },
+        "Item":{
+          "shape":"string",
+          "documentation":"<p>The change type item values to return the operation values for.</p>"
+        },
+        "MaxResults":{
+          "shape":"int",
+          "documentation":"<p>The maximum number of items to return in one batch. Valid values are 20-100.</p>"
+        },
+        "NextToken":{
+          "shape":"string",
+          "documentation":"<p>If the response contains more items than <code>MaxResults</code>, only <code>MaxResults</code> items are returned, and a <code>NextToken</code> pagination token is returned in the response. To retrieve the next batch of items, reissue the request and include the returned token in the <code>NextToken</code> parameter. When all items have been returned, the response does not contain a pagination token value.</p>"
+        },
+        "Subcategory":{
+          "shape":"string",
+          "documentation":"<p>The change type subcategory values to return the operation values for.</p>"
+        }
+      }
+    },
+    "ListChangeTypeOperationsResponse":{
+      "type":"structure",
+      "members":{
+        "ChangeTypeOperationSummaries":{
+          "shape":"ChangeTypeOperationSummaries",
+          "documentation":"<p>The change type operation values for the specified category, subcategory, and item values.</p>"
+        },
+        "NextToken":{
+          "shape":"string",
+          "documentation":"<p>If the response contains more items than <code>MaxResults</code>, only <code>MaxResults</code> items are returned, and a <code>NextToken</code> pagination token is returned in the response. To retrieve the next batch of items, reissue the request and include the returned token in the <code>NextToken</code> parameter. When all items have been returned, the response does not contain a pagination token value.</p>"
+        }
+      }
+    },
+    "ListChangeTypeSubcategoriesRequest":{
+      "type":"structure",
+      "required":["Category"],
+      "members":{
+        "Category":{
+          "shape":"string",
+          "documentation":"<p>The change type category value to return the subcategory values for.</p>"
+        },
+        "Locale":{
+          "shape":"string",
+          "documentation":"<p>The locale (language) to return information in. The default is English. <b>Note:</b> For future use; not currently implemented.</p>"
+        },
+        "MaxResults":{
+          "shape":"int",
+          "documentation":"<p>The maximum number of items to return in one batch. Valid values are 20-100.</p>"
+        },
+        "NextToken":{
+          "shape":"string",
+          "documentation":"<p>If the response contains more items than <code>MaxResults</code>, only <code>MaxResults</code> items are returned, and a <code>NextToken</code> pagination token is returned in the response. To retrieve the next batch of items, reissue the request and include the returned token in the <code>NextToken</code> parameter. When all items have been returned, the response does not contain a pagination token value.</p>"
+        }
+      }
+    },
+    "ListChangeTypeSubcategoriesResponse":{
+      "type":"structure",
+      "members":{
+        "ChangeTypeSubcategories":{
+          "shape":"ChangeTypeSubcategories",
+          "documentation":"<p>The change type subcategory values for the specified category value.</p>"
+        },
+        "NextToken":{
+          "shape":"string",
+          "documentation":"<p>If the response contains more items than <code>MaxResults</code>, only <code>MaxResults</code> items are returned, and a <code>NextToken</code> pagination token is returned in the response. To retrieve the next batch of items, reissue the request and include the returned token in the <code>NextToken</code> parameter. When all items have been returned, the response does not contain a pagination token value.</p>"
+        }
+      }
+    },
+    "ListChangeTypeVersionSummariesRequest":{
+      "type":"structure",
+      "members":{
+        "Filters":{
+          "shape":"Filters",
+          "documentation":"<p>The only valid filter attribute is <code>ChangeTypeId</code>, and a value is required.</p>"
+        },
+        "MaxResults":{
+          "shape":"int",
+          "documentation":"<p>The maximum number of items to return in one batch. Valid values are 20-100.</p>"
+        },
+        "NextToken":{
+          "shape":"string",
+          "documentation":"<p>If the response contains more items than <code>MaxResults</code>, only <code>MaxResults</code> items are returned, and a <code>NextToken</code> pagination token is returned in the response. To retrieve the next batch of items, reissue the request and include the returned token in the <code>NextToken</code> parameter. When all items have been returned, the response does not contain a pagination token value.</p>"
+        }
+      }
+    },
+    "ListChangeTypeVersionSummariesResponse":{
+      "type":"structure",
+      "members":{
+        "ChangeTypeVersionSummaries":{
+          "shape":"ChangeTypeVersionSummaries",
+          "documentation":"<p>The version information (versions and deprecation times) for the specified change type.</p>"
+        },
+        "NextToken":{
+          "shape":"string",
+          "documentation":"<p>If the response contains more items than <code>MaxResults</code>, only <code>MaxResults</code> items are returned, and a <code>NextToken</code> pagination token is returned in the response. To retrieve the next batch of items, reissue the request and include the returned token in the <code>NextToken</code> parameter. When all items have been returned, the response does not contain a pagination token value.</p>"
+        }
+      }
+    },
+    "ListRestrictedExecutionTimesRequest":{
+      "type":"structure",
+      "members":{
+        "MaxResults":{
+          "shape":"int",
+          "documentation":"<p>The maximum number of items to return in one batch. Valid values are 20-100.</p>"
+        },
+        "NextToken":{
+          "shape":"string",
+          "documentation":"<p>If the response contains more items than <code>MaxResults</code>, only <code>MaxResults</code> items are returned, and a <code>NextToken</code> pagination token is returned in the response. To retrieve the next batch of items, reissue the request and include the returned token in the <code>NextToken</code> parameter. When all items have been returned, the response does not contain a pagination token value.</p>"
+        }
+      }
+    },
+    "ListRestrictedExecutionTimesResponse":{
+      "type":"structure",
+      "members":{
+        "NextToken":{
+          "shape":"string",
+          "documentation":"<p>If the response contains more items than <code>MaxResults</code>, only <code>MaxResults</code> items are returned, and a <code>NextToken</code> pagination token is returned in the response. To retrieve the next batch of items, reissue the request and include the returned token in the <code>NextToken</code> parameter. When all items have been returned, the response does not contain a pagination token value.</p>"
+        },
+        "RestrictedExecutionTimes":{
+          "shape":"RestrictedExecutionTimes",
+          "documentation":"<p>The time ranges during which change execution is restricted.</p>"
+        }
+      }
+    },
+    "ListRfcSummariesRequest":{
+      "type":"structure",
+      "members":{
+        "Filters":{
+          "shape":"Filters",
+          "documentation":"<p>Attribute/value pairs to narrow the results returned. Filter criteria are combined in a logical AND operation. Valid filter attributes: <code>AutomationStatusId</code> (valid values: <code>Manual</code> or <code>Automated</code>), <code>ChangeTypeId</code>, <code>ChangeTypeVersion</code>, <code>RfcStatusId</code> (valid values: <code>Editing</code>, <code>PendingApproval</code>, <code>Scheduled</code>, <code>Rejected</code>, <code>Canceled</code>, <code>InProgress</code>, <code>Success</code> and <code>Failure</code>), <code>Subject</code>.</p>"
+        },
+        "Locale":{
+          "shape":"string",
+          "documentation":"<p>The locale (language) to return information in. The default is English. <b>Note:</b> For future use; not currently implemented.</p>"
+        },
+        "MaxResults":{
+          "shape":"int",
+          "documentation":"<p>The maximum number of items to return in one batch. Valid values are 20-100.</p>"
+        },
+        "NextToken":{
+          "shape":"string",
+          "documentation":"<p>If the response contains more items than <code>MaxResults</code>, only <code>MaxResults</code> items are returned, and a <code>NextToken</code> pagination token is returned in the response. To retrieve the next batch of items, reissue the request and include the returned token in the <code>NextToken</code> parameter. When all items have been returned, the response does not contain a pagination token value.</p>"
+        },
+        "RequestedEndTimeRange":{
+          "shape":"TimeRange",
+          "documentation":"<p>The span of time during which you want the change to end.</p>"
+        },
+        "RequestedStartTimeRange":{
+          "shape":"TimeRange",
+          "documentation":"<p>The span of time during which you want the change to start.</p>"
+        }
+      }
+    },
+    "ListRfcSummariesResponse":{
+      "type":"structure",
+      "members":{
+        "NextToken":{
+          "shape":"string",
+          "documentation":"<p>If the response contains more items than <code>MaxResults</code>, only <code>MaxResults</code> items are returned, and a <code>NextToken</code> pagination token is returned in the response. To retrieve the next batch of items, reissue the request and include the returned token in the <code>NextToken</code> parameter. When all items have been returned, the response does not contain a pagination token value.</p>"
+        },
+        "RfcSummaries":{
+          "shape":"RfcSummaries",
+          "documentation":"<p>The summaries of RFCs that meet the specified criteria.</p>"
+        }
+      }
+    },
+    "RejectRfcRequest":{
+      "type":"structure",
+      "required":[
+        "Reason",
+        "RfcId"
+      ],
+      "members":{
+        "Reason":{
+          "shape":"sensitivestring",
+          "documentation":"<p>The reason for the rejection.</p> <p>If an RFC is rejected or canceled, the reason for the action appears in the <code>RfcReason</code>.</p>"
+        },
+        "RfcId":{
+          "shape":"string",
+          "documentation":"<p>The unique ID (UUID) of the RFC to reject.</p>"
+        }
+      }
+    },
+    "RejectRfcResponse":{
+      "type":"structure",
+      "members":{
+      }
+    },
+    "ResourceNotFoundException":{
+      "type":"structure",
+      "members":{
+        "Message":{"shape":"string"}
+      },
+      "documentation":"<p>A specified resource could not be located. Actual status code: 404</p>",
+      "exception":true
+    },
+    "RestrictedExecutionTime":{
+      "type":"structure",
+      "members":{
+        "TimeRange":{
+          "shape":"TimeRange",
+          "documentation":"<p>The starting and ending times of a restricted time range.</p>"
+        }
+      },
+      "documentation":"<p>The time ranges during which change execution is restricted.</p>"
+    },
+    "RestrictedExecutionTimes":{
+      "type":"list",
+      "member":{"shape":"RestrictedExecutionTime"}
+    },
+    "Rfc":{
+      "type":"structure",
+      "members":{
+        "ActualExecutionTimeRange":{
+          "shape":"TimeRange",
+          "documentation":"<p>The starting and ending dates and times during which the change was executed.</p>"
+        },
+        "ApprovalState":{
+          "shape":"RfcApprovalState",
+          "documentation":"<p>The approval statuses of the RFC.</p>"
+        },
+        "AutomationStatus":{"shape":"AutomationStatus"},
+        "ChangeTypeId":{
+          "shape":"string",
+          "documentation":"<p>The unique ID of the change type, in the form ct-2ty5seo8rxfsc.</p>"
+        },
+        "ChangeTypeVersion":{
+          "shape":"string",
+          "documentation":"<p>The version number of the change type version associated with the RFC.</p>"
+        },
+        "CreatedBy":{
+          "shape":"sensitivestring",
+          "documentation":"<p>The Amazon Resource Name (ARN) of the user who created the RFC.</p>"
+        },
+        "CreatedTime":{
+          "shape":"datetime",
+          "documentation":"<p>The date and time that the RFC was created.</p>"
+        },
+        "Description":{
+          "shape":"sensitivestring",
+          "documentation":"<p>A text description of the RFC.</p>"
+        },
+        "ExecutionOutput":{
+          "shape":"sensitivestring",
+          "documentation":"<p>The output from the execution of the change.</p>"
+        },
+        "ExecutionParameters":{
+          "shape":"sensitivestring",
+          "documentation":"<p>The parameters to use in the execution of the request, in JSON format. To get the JSON schema for the parameters, use the <a>GetChangeTypeVersion</a> operation.</p>"
+        },
+        "ExpectedOutcome":{
+          "shape":"sensitivestring",
+          "documentation":"<p>A description of the effects of the change.</p>"
+        },
+        "ImplementationPlan":{
+          "shape":"sensitivestring",
+          "documentation":"<p>The actions or steps required to implement the change.</p>"
+        },
+        "LastModifiedBy":{
+          "shape":"sensitivestring",
+          "documentation":"<p>The Amazon Resource Name (ARN) of the user who made the most recent change to the RFC.</p>"
+        },
+        "LastModifiedTime":{
+          "shape":"datetime",
+          "documentation":"<p>The time that the RFC was most recently modified, expressed in ISO 8601 format. By default, AWS MS uses the basic format (YYYYMMDDThhmmssZ). </p>"
+        },
+        "LastSubmittedTime":{"shape":"datetime"},
+        "RequestedExecutionTimeRange":{
+          "shape":"TimeRange",
+          "documentation":"<p>The starting and ending dates and times during which the change should be executed. Null if the RFC was ASAP.</p>"
+        },
+        "RestrictedExecutionTimesOverride":{
+          "shape":"RfcRestrictedExecutionTimesOverride",
+          "documentation":"<p>An indication of whether the change should observe the preset restricted execution times. Possible values: <code>NoOverrides</code> | <code>OverrideRestrictedTimeRanges</code>.</p>"
+        },
+        "RfcId":{
+          "shape":"string",
+          "documentation":"<p>The unique ID (UUID) of the RFC.</p>"
+        },
+        "RollbackPlan":{
+          "shape":"sensitivestring",
+          "documentation":"<p>The actions or steps required to undo the change.</p>"
+        },
+        "Status":{
+          "shape":"RfcStatus",
+          "documentation":"<p>The status of the RFC. Possible values: <code>Editing</code> | <code>PendingApproval</code> | <code>Scheduled</code> | <code>Canceled</code> | <code>Rejected</code> | <code>InProgress</code> | <code>Success</code> | <code>Failure</code> </p>"
+        },
+        "StatusReason":{
+          "shape":"string",
+          "documentation":"<p>The reason provided for RFC status; for example, why it was rejected.</p>"
+        },
+        "Title":{
+          "shape":"sensitivestring",
+          "documentation":"<p>The identifying title of the RFC.</p>"
+        },
+        "WorstCaseScenario":{
+          "shape":"sensitivestring",
+          "documentation":"<p>A description of the most unfavorable outcome of the change.</p>"
+        }
+      },
+      "documentation":"<p>A request for change. For more information, see <a>CreateRfc</a>.</p>"
+    },
+    "RfcApprovalState":{
+      "type":"structure",
+      "members":{
+        "AwsApprovalStatus":{
+          "shape":"RfcApprovalStatus",
+          "documentation":"<p>The status of the approval by AWS operations.</p>"
+        },
+        "CustomerApprovalStatus":{
+          "shape":"RfcApprovalStatus",
+          "documentation":"<p>The status of the approval by the customer.</p>"
+        }
+      },
+      "documentation":"<p>The status of the approvals for the RFC.</p>"
+    },
+    "RfcApprovalStatus":{
+      "type":"structure",
+      "members":{
+        "Id":{
+          "shape":"string",
+          "documentation":"<p>The ID of the status. Valid values: <code>SubmissionPending</code> | <code>NotRequired</code> | <code>ApprovalPending</code> | <code>Approved</code> | <code>Rejected</code>.</p>"
+        },
+        "Name":{
+          "shape":"string",
+          "documentation":"<p>A name for the corresponding status ID.</p>"
+        }
+      },
+      "documentation":"<p>An ID and name for an approval status of an RFC.</p>"
+    },
+    "RfcRestrictedExecutionTimesOverride":{
+      "type":"structure",
+      "members":{
+        "Id":{
+          "shape":"string",
+          "documentation":"<p>The ID of the override option.</p>"
+        },
+        "Name":{
+          "shape":"string",
+          "documentation":"<p>A name for the corresponding override option.</p>"
+        }
+      },
+      "documentation":"<p>An ID and name for an option for overriding preset restrictions on execution of a change.</p>"
+    },
+    "RfcStatus":{
+      "type":"structure",
+      "members":{
+        "Id":{
+          "shape":"string",
+          "documentation":"<p>The ID of the status. Possible values: <code>Editing</code> | <code>PendingApproval</code> | <code>Scheduled</code> | <code>InProgress</code> | <code>Rejected</code> | <code>Canceled</code> | <code>Success</code> | <code>Failure</code> </p>"
+        },
+        "Name":{
+          "shape":"string",
+          "documentation":"<p>A name for the corresponding status ID.</p>"
+        }
+      },
+      "documentation":"<p>An ID and name for the status of the RFC.</p>"
+    },
+    "RfcSummaries":{
+      "type":"list",
+      "member":{"shape":"RfcSummary"}
+    },
+    "RfcSummary":{
+      "type":"structure",
+      "members":{
+        "ActualExecutionTimeRange":{
+          "shape":"TimeRange",
+          "documentation":"<p>The starting and ending dates and times during which the change was executed.</p>"
+        },
+        "AutomationStatus":{"shape":"AutomationStatus"},
+        "ChangeTypeId":{
+          "shape":"string",
+          "documentation":"<p>The unique ID of the change type, in the form ct-2ty5seo8rxfsc.</p>"
+        },
+        "ChangeTypeVersion":{
+          "shape":"string",
+          "documentation":"<p>The version number of the change type version associated with the RFC.</p>"
+        },
+        "CreatedTime":{
+          "shape":"datetime",
+          "documentation":"<p>The date and time that the RFC was created.</p>"
+        },
+        "LastModifiedTime":{
+          "shape":"datetime",
+          "documentation":"<p>The time that the RFC was most recently modified, expressed in ISO 8601 format. By default, AWS MS uses the basic format (YYYYMMDDThhmmssZ). </p>"
+        },
+        "LastSubmittedTime":{"shape":"datetime"},
+        "RequestedExecutionTimeRange":{
+          "shape":"TimeRange",
+          "documentation":"<p>The starting and ending dates and times during which the change should be executed. Null if the RFC was ASAP.</p>"
+        },
+        "RfcId":{
+          "shape":"string",
+          "documentation":"<p>The unique ID (UUID) of the RFC.</p>"
+        },
+        "Status":{
+          "shape":"RfcStatus",
+          "documentation":"<p>The status of the RFC. Possible values: <code>Editing</code> | <code>PendingApproval</code> | <code>Scheduled</code> | <code>Canceled</code> | <code>Rejected</code> | <code>InProgress</code> | <code>Success</code> | <code>Failure</code> </p>"
+        },
+        "Title":{
+          "shape":"sensitivestring",
+          "documentation":"<p>The identifying title of the RFC.</p>"
+        }
+      },
+      "documentation":"<p>Summary information about a request for change.</p>"
+    },
+    "SubmitRfcRequest":{
+      "type":"structure",
+      "required":["RfcId"],
+      "members":{
+        "RestrictedExecutionTimesOverrideId":{
+          "shape":"string",
+          "documentation":"<p>The ID of a value that indicates how the change should observe default execution settings. Possible values: <code>NoOverrides</code> | <code>OverrideRestrictedTimeRanges</code>. The default is <code>NoOverrides</code>.</p>"
+        },
+        "RfcId":{
+          "shape":"string",
+          "documentation":"<p>The unique ID (UUID) of the RFC to submit.</p>"
+        }
+      }
+    },
+    "SubmitRfcResponse":{
+      "type":"structure",
+      "members":{
+      }
+    },
+    "TimeRange":{
+      "type":"structure",
+      "members":{
+        "StartTime":{
+          "shape":"datetime",
+          "documentation":"<p>The starting date and time, expressed in ISO 8601 format. By default, AWS MS uses the basic format (YYYYMMDDThhmmssZ)</p>"
+        },
+        "EndTime":{
+          "shape":"datetime",
+          "documentation":"<p>The ending date and time, expressed in ISO 8601 format. By default, AWS MS uses the basic format (YYYYMMDDThhmmssZ)</p>"
+        }
+      },
+      "documentation":"<p>A starting and ending date and time.</p>"
+    },
+    "UpdateRestrictedExecutionTimesRequest":{
+      "type":"structure",
+      "required":["RestrictedExecutionTimes"],
+      "members":{
+        "RestrictedExecutionTimes":{
+          "shape":"RestrictedExecutionTimes",
+          "documentation":"<p>The new restricted time ranges. </p>"
+        }
+      }
+    },
+    "UpdateRestrictedExecutionTimesResponse":{
+      "type":"structure",
+      "members":{
+      }
+    },
+    "UpdateRfcRequest":{
+      "type":"structure",
+      "required":["RfcId"],
+      "members":{
+        "Description":{
+          "shape":"sensitivestring",
+          "documentation":"<p>The new description of the RFC.</p>"
+        },
+        "ExecutionParameters":{
+          "shape":"sensitivestring",
+          "documentation":"<p>The new parameters that are required to execute the RFC, submitted in JSON format.</p>"
+        },
+        "ExpectedOutcome":{
+          "shape":"sensitivestring",
+          "documentation":"<p>A new description of the effects of the change.</p>"
+        },
+        "ImplementationPlan":{
+          "shape":"sensitivestring",
+          "documentation":"<p>The new actions or steps required to implement the change (for change types that are not automated).</p>"
+        },
+        "RequestedEndTime":{
+          "shape":"datetime",
+          "documentation":"<p>The new end of the change window, expressed in ISO 8601 format. The default format is the <i>basic</i> format (<code>YYYYMMDDThhmmssZ</code>). For example, 2017/02/27 at 2:30 PM would be 20170227T143000Z. An RFC does not fail if the requested end time is exceeded.</p>"
+        },
+        "RequestedStartTime":{
+          "shape":"datetime",
+          "documentation":"<p>The new start of the change window, expressed in ISO 8601 format. The default format is the <i>basic</i> format (<code>YYYYMMDDThhmmssZ</code>). For example, 2017/02/27 at 2:10 PM would be 20170227T141000Z. For best results, set the requested start time to at least 20 minutes past the time that you expect to submit the RFC. Alternatively, you can use the ASAP option, which causes the RFC to be executed as soon as it is approved, to use this option, do not specify any start time. If the RFC does not pass syntax or other checks before the requested start time (if set), the RFC is canceled.</p>"
+        },
+        "RfcId":{
+          "shape":"string",
+          "documentation":"<p>The unique ID (UUID) of the RFC</p>"
+        },
+        "RollbackPlan":{
+          "shape":"sensitivestring",
+          "documentation":"<p>The new actions or steps required to undo the change.</p>"
+        },
+        "Title":{
+          "shape":"sensitivestring",
+          "documentation":"<p>A new name for the RFC; this is displayed as the subject of the RFC in the AMS console.</p>"
+        },
+        "WorstCaseScenario":{
+          "shape":"sensitivestring",
+          "documentation":"<p>A new description of the most unfavorable outcome of the change.</p>"
+        }
+      },
+      "documentation":"<p>The parameters for the <a>UpdateRfc</a> operation.</p>"
+    },
+    "UpdateRfcResponse":{
+      "type":"structure",
+      "members":{
+      },
+      "documentation":"<p>The response to the <a>UpdateRfc</a> operation.</p>"
+    },
+    "datetime":{"type":"string"},
+    "int":{"type":"integer"},
+    "sensitivestring":{
+      "type":"string",
+      "sensitive":true
+    },
+    "string":{"type":"string"}
+  },
+  "documentation":"<fullname>AWS Managed Services</fullname> <p>The change management API provides operations to create and manage requests for change (RFCs). RFCs can be created, updated, submitted, approved (or rejected), and canceled.</p> <p> <b>Creating a Request for Change</b> </p> <p>To create a request for change, begin by calling <a>CreateRfc</a>. After creating the basic RFC and before submitting it, you can add or update information (<code>Description</code>, <code>ExpectedOutcome</code>, <code>ImplementationPlan</code>, <code>RollbackPlan</code>, and <code>WorstCaseScenario</code>) by using the <code>UpdateRfc</code> operation (<a>UpdateRfc</a>).</p> <p>When all necessary information has been added, use <a>SubmitRfc</a> to activate the RFC.</p> <important> <p>Although only the change type (<code>ChangeTypeId</code> and <code>ChangeTypeVersion</code>) and <code>Title</code> are required to initially create an RFC, you must provide values for these fields (either in the original <a>CreateRfc</a> call or by using the corresponding <code>UpdateRfc</code> (<a>UpdateRfc</a> operation) before calling <a>SubmitRfc</a>:</p> <ul> <li> <p> <code>RequestedStartTime</code> (<a>CreateRfc</a> and <code>RequestedEndTime</code>, if you want to schedule the RFC. If scheduling is unimportant, leave off these values and execution begins as soon as the RFC is approved. This is part of a feature known as ASAP, or un-scheduled RFC.</p> </li> <li> <p> <code>ExecutionParameters</code> that comply with the JSON <code>ExecutionInputSchema</code> of the change type that is associated with the RFC (<a>CreateRfc</a> or <a>UpdateRfc</a>)</p> </li> </ul> </important> <p>For more information and examples, see <a href=\"http://docs.aws.amazon.com/managedservices/latest/userguide/change-mgmt.html\">Change Management</a> in the <i>AWS Managed Services User Guide</i>.</p> <p> <b>Getting information about an RFC</b> </p> <p>The <a>GetRfc</a> operation shows most of the information about an RFC, including the approval status and execution status. </p> <p>If an RFC is rejected or canceled, the reason for the action appears in the <code>RfcReason</code>.</p> <p> <b>Service Endpoint</b> </p> <p>The HTTP endpoint for the Change Management API is:</p> <ul> <li> <p>https://amscm.us-east-1.amazonaws.com </p> </li> </ul>"
+}

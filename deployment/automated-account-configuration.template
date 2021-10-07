@@ -1,0 +1,761 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "(SO0123) - The AWS CloudFormation template for deployment of the AWS Automated Account Configuration Solution - step 1, (Version %%VERSION%%)"
+Parameters:
+  IAMPermissionsBoundary:
+    Type: String
+    Description: "(Optional) This is IAM Permissions Boundary ARN"
+  ExternalIamID:
+    Type: String
+    Default: 1234567890abcdef0
+    Description: This is the external ID used by tools account when assuming IAM role in application account(s).
+Conditions:
+  HasIamPermissionsBoundary: !Not
+    - !Equals
+      - ""
+      - !Ref IAMPermissionsBoundary
+Mappings:
+  SourceCode:
+    General:
+      S3Bucket: "%%BUCKET_NAME%%"
+      KeyPrefix: "%%SOLUTION_NAME%%/%%VERSION%%"
+Resources:
+  myS3Key:
+    Type: AWS::KMS::Key
+    Properties:
+      EnableKeyRotation: true
+      PendingWindowInDays: 20
+      Tags:
+        - Key: Environment
+          Value: Development
+      KeyPolicy:
+        Version: "2012-10-17"
+        Id: key-default-1
+        Statement:
+          - Sid: Enable IAM User Permissions
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::Join:
+                  - ""
+                  - - "arn:aws:iam::"
+                    - Ref: AWS::AccountId
+                    - :root
+            Action: kms:*
+            Resource: "*"
+          - Sid: "Allow use of the key"
+            Effect: Allow
+            Principal:
+              AWS: !GetAtt "MainToolsRole.Arn"
+            Action:
+              - kms:DescribeKey
+              - kms:Encrypt
+              - kms:Decrypt
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey
+              - kms:GenerateDataKeyWithoutPlaintext
+            Resource: "*"
+  LoggingBucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      Tags:
+        - Key: Environment
+          Value: Development
+      AccessControl: LogDeliveryWrite
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: TRUE
+        BlockPublicPolicy: TRUE
+        IgnorePublicAcls: TRUE
+        RestrictPublicBuckets: TRUE
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: "aws:kms"
+              KMSMasterKeyID: !GetAtt myS3Key.Arn
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W51
+          - reason: "Log retention bucket for internal customer use"
+          - id: W41
+          - reason: "Log retention bucket for internal customer use"
+          - id: W35
+          - reason: "Log retention bucket for internal customer use"
+  LambdaMainBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "automated-account-configuration-${AWS::AccountId}"
+      Tags:
+        - Key: Environment
+          Value: Development
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: TRUE
+        BlockPublicPolicy: TRUE
+        IgnorePublicAcls: TRUE
+        RestrictPublicBuckets: TRUE
+      VersioningConfiguration:
+        Status: Enabled
+      LoggingConfiguration:
+        DestinationBucketName: !Ref LoggingBucket
+        LogFilePrefix: account-automation-logs
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: "aws:kms"
+              KMSMasterKeyID: !GetAtt myS3Key.Arn
+  LambdaMainBucketPolicy:
+    Type: "AWS::S3::BucketPolicy"
+    Properties:
+      Bucket:
+        Ref: LambdaMainBucket
+      PolicyDocument:
+        Statement:
+          - Action: "s3:*"
+            Effect: Allow
+            Resource:
+              - !Sub "arn:aws:s3:::${LambdaMainBucket}"
+              - !Sub "arn:aws:s3:::${LambdaMainBucket}/*"
+            Principal:
+              AWS: !GetAtt "MainToolsRole.Arn"
+          - Action: s3:*
+            Effect: Deny
+            Principal: "*"
+            Resource:
+              - !Sub "arn:aws:s3:::${LambdaMainBucket}"
+              - !Sub "arn:aws:s3:::${LambdaMainBucket}/*"
+            Condition:
+              Bool:
+                aws:SecureTransport: false
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: F15
+          - reason: "* Used to deny IAM access for the role"
+  MainToolsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: setup-tools-account-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+                - states.amazonaws.com
+            Action: sts:AssumeRole
+      PermissionsBoundary: !If 
+         - HasIamPermissionsBoundary
+         - !Ref IAMPermissionsBoundary
+         - !Ref 'AWS::NoValue'
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+          - reason: "Using explicit name to control access"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Path: /
+  MainRoleS3Policy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: account-automation-key
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:ListBucket
+            Resource:
+              - !Sub "arn:aws:s3:::${LambdaMainBucket}"
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+            Resource:
+              - !Sub "arn:aws:s3:::${LambdaMainBucket}/*"
+          - Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:DeleteObject
+            Resource:
+              - !Sub "arn:aws:s3:::${LambdaMainBucket}/*"
+      Roles:
+        - !Ref MainToolsRole
+  MainRoleKeyPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: account-automation-key
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - kms:Describe*
+              - kms:Get*
+              - kms:List*
+              - kms:UntagResource
+              - iam:ListGroups
+              - iam:ListRoles
+              - iam:ListUsers
+            Resource: !GetAtt myS3Key.Arn
+      Roles:
+        - !Ref MainToolsRole
+  MainRoleStepFunctionPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: account-automation-stepfunctions
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "states:StartExecution"
+              - "states:ListExecutions"
+              - "states:ListStateMachines"
+              - "states:ListActivities"
+              - "states:CreateActivity"
+            Resource:
+              [
+                !Ref "RFCStepFunctionInstall",
+                !Ref "ServiceRequestMachineInstall",
+                !Ref "CustomerManagedBackUpMachineInstall",
+                !Ref "CustomerManagedPatchMachineInstall",
+              ]
+      Roles:
+        - !Ref MainToolsRole
+  MainRoleLambdaPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: account-automation-lambda
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "lambda:InvokeFunction"
+              - "lambda:GetFunction"
+              - "lambda:ListFunctions"
+              - "lambda:GetFunction"
+            Resource:
+              [
+                !GetAtt "MainOrchestratorFunction.Arn",
+                !GetAtt "AMSCreateRFCFunction.Arn",
+                !GetAtt "AMSCreateSRFunction.Arn",
+                !GetAtt "AMSCheckRFCFunction.Arn",
+                !GetAtt "CreateCustomerManagedPatchFunction.Arn",
+                !GetAtt "CustomerManagedBackUpFunction.Arn",
+              ]
+      Roles:
+        - !Ref MainToolsRole
+  MainRoleSTSPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: account-automation-sts
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - sts:AssumeRole
+            Resource: "arn:aws:iam::*:role/ApplicationAccountRole"
+      Roles:
+        - !Ref MainToolsRole
+  MainRoleCWPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: account-automation-cloudwatch
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - logs:List
+              - logs:CreateLogStream
+              - logs:Describe
+              - logs:DeleteLogGroup
+              - logs:GetLogGroupFields
+              - logs:CreateLogGroup
+            Resource: "arn:aws:logs:*:*:log-group:*"
+          - Effect: Allow
+            Action:
+              - logs:DeleteLogStream
+              - logs:PutLogEvents
+            Resource:
+              - "arn:aws:logs:*:*:log-group:*:log-stream:*"
+      Roles:
+        - !Ref MainToolsRole
+  MyLayer:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - python3.7
+        - python3.8
+      Content:
+        S3Bucket:
+          !Join [
+            "-",
+            [
+              !FindInMap ["SourceCode", "General", "S3Bucket"],
+              Ref: "AWS::Region",
+            ],
+          ]
+        S3Key:
+          !Join [
+            "/",
+            [
+              !FindInMap ["SourceCode", "General", "KeyPrefix"],
+              "python_libs.zip",
+            ],
+          ]
+      Description: Layer containing function to get auth and utility operations
+      LayerName: account-automation-layer
+  MainOrchestratorFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: Main orchestrator to initialize execution
+      FunctionName: main-orchestrator-lambda
+      Handler: Main_Orchestrator.lambda_handler
+      Environment:
+        Variables:
+          botoConfig: '{"user_agent_extra": "AwsSolution/SO0155/%%VERSION%%"}'
+          Tools_Account_Conf_Bucket: !Ref LambdaMainBucket
+          Tools_Account_Conf_Key: 'Account_Configuration/Account_Config.json'
+      Runtime: python3.8
+      Tags:
+        - Key: Environment
+          Value: Development
+      Layers:
+        - !Ref "MyLayer"
+      Role: !GetAtt MainToolsRole.Arn
+      Timeout: 300
+      Code:
+        S3Bucket:
+          !Join [
+            "-",
+            [
+              !FindInMap ["SourceCode", "General", "S3Bucket"],
+              Ref: "AWS::Region",
+            ],
+          ]
+        S3Key:
+          !Join [
+            "/",
+            [
+              !FindInMap ["SourceCode", "General", "KeyPrefix"],
+              "Main_Orchestrator.zip",
+            ],
+          ]
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W58
+          - reason: "Lambda IAM has permissions to write to Cloudwatch"
+          - id: W92
+          - reason: "Solution does not use concurrent executions"
+          - id: W89
+          - reason: "Solution does not require customer to have a VPC"
+  Version:
+    Type: AWS::Lambda::Version
+    Properties:
+      FunctionName: !Ref MainOrchestratorFunction
+      Description: v1
+  MainAlias:
+    Type: AWS::Lambda::Alias
+    Properties:
+      FunctionName: !Ref MainOrchestratorFunction
+      FunctionVersion: !GetAtt Version.Version
+      Name: BLUE
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W58
+          - reason: "Lambda IAM has permissions to write to Cloudwatch"
+          - id: W92
+          - reason: "Solution does not use concurrent executions"
+          - id: W89
+          - reason: "Solution does not require customer to have a VPC"
+  AMSCreateRFCFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: ams-create-rfc-lambda
+      Description: Function to create AMS Request for change
+      Handler: Create_RFC.lambda_handler
+      Environment:
+        Variables:
+          botoConfig: '{"user_agent_extra": "AwsSolution/SO0155/%%VERSION%%"}'
+          Tools_Account_Conf_Bucket: !Ref LambdaMainBucket
+          Tools_Account_Conf_Key: 'Account_Configuration/Account_Config.json'
+          Json_Template_S3_Key: 'JSON_Template/'
+          External_id: !Ref ExternalIamID
+      Runtime: python3.8
+      Tags:
+        - Key: Environment
+          Value: Development
+      Layers:
+        - !Ref "MyLayer"
+      Role: !GetAtt MainToolsRole.Arn
+      Timeout: 300
+      Code:
+        S3Bucket:
+          !Join [
+            "-",
+            [
+              !FindInMap ["SourceCode", "General", "S3Bucket"],
+              Ref: "AWS::Region",
+            ],
+          ]
+        S3Key:
+          !Join [
+            "/",
+            [
+              !FindInMap ["SourceCode", "General", "KeyPrefix"],
+              "Create_RFC.zip",
+            ],
+          ]
+      TracingConfig:
+        Mode: Active
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W58
+          - reason: "Lambda IAM has permissions to write to Cloudwatch"
+          - id: W92
+          - reason: "Solution does not use concurrent executions"
+          - id: W89
+          - reason: "Solution does not require customer to have a VPC"
+  AMSCheckRFCFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: Function to check the status of an AMS RFC
+      FunctionName: ams-check-rfc-lambda
+      Handler: Check_Status_RFC.lambda_handler
+      Environment:
+        Variables:
+          botoConfig: '{"user_agent_extra": "AwsSolution/SO0155/%%VERSION%%"}'
+          External_id: !Ref ExternalIamID
+      Runtime: python3.8
+      Tags:
+        - Key: Environment
+          Value: Development
+      Layers:
+        - !Ref "MyLayer"
+      Role: !GetAtt MainToolsRole.Arn
+      Timeout: 300
+      Code:
+        S3Bucket:
+          !Join [
+            "-",
+            [
+              !FindInMap ["SourceCode", "General", "S3Bucket"],
+              Ref: "AWS::Region",
+            ],
+          ]
+        S3Key:
+          !Join [
+            "/",
+            [
+              !FindInMap ["SourceCode", "General", "KeyPrefix"],
+              "Check_RFC.zip",
+            ],
+          ]
+
+      TracingConfig:
+        Mode: Active
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W58
+          - reason: "Lambda IAM has permissions to write to Cloudwatch"
+          - id: W92
+          - reason: "Solution does not use concurrent executions"
+          - id: W89
+          - reason: "Solution does not require customer to have a VPC"
+  AMSCreateSRFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: ams-create-sr-lambda
+      Description: Function to create AWS managed services service request
+      Handler: Create_SR.lambda_handler
+      Environment:
+        Variables:
+          botoConfig: '{"user_agent_extra": "AwsSolution/SO0155/%%VERSION%%"}'
+          Tools_Account_Conf_Bucket: !Ref LambdaMainBucket
+          Tools_Account_Conf_Key: 'Account_Configuration/Account_Config.json'
+          Json_Template_S3_Key: 'JSON_Template/'
+          External_id: !Ref ExternalIamID
+      Runtime: python3.8
+      Tags:
+        - Key: Environment
+          Value: Development
+      Layers:
+        - !Ref "MyLayer"
+      Role: !GetAtt MainToolsRole.Arn
+      Timeout: 300
+      Code:
+        S3Bucket:
+          !Join [
+            "-",
+            [
+              !FindInMap ["SourceCode", "General", "S3Bucket"],
+              Ref: "AWS::Region",
+            ],
+          ]
+        S3Key:
+          !Join [
+            "/",
+            [
+              !FindInMap ["SourceCode", "General", "KeyPrefix"],
+              "Create_SR.zip",
+            ],
+          ]
+      TracingConfig:
+        Mode: Active
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W58
+          - reason: "Lambda IAM has permissions to write to Cloudwatch"
+          - id: W92
+          - reason: "Solution does not use concurrent executions"
+          - id: W89
+          - reason: "Solution does not require customer to have a VPC"
+  CustomerManagedBackUpFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: Function to create native AWS backup plans
+      FunctionName: customer-managed-backup
+      Handler: customer_managed_backup.lambda_handler
+      Environment:
+        Variables:
+          botoConfig: '{"user_agent_extra": "AwsSolution/SO0155/%%VERSION%%"}'
+          Tools_Account_Conf_Bucket: !Ref LambdaMainBucket
+          Tools_Account_Conf_Key: 'Account_Configuration/Account_Config.json'
+          Json_Template_S3_Key: 'JSON_Template/'
+          External_id: !Ref ExternalIamID
+      Runtime: python3.8
+      Tags:
+        - Key: Environment
+          Value: Development
+      Layers:
+        - !Ref "MyLayer"
+      Role: !GetAtt MainToolsRole.Arn
+      Timeout: 300
+      Code:
+        S3Bucket:
+          !Join [
+            "-",
+            [
+              !FindInMap ["SourceCode", "General", "S3Bucket"],
+              Ref: "AWS::Region",
+            ],
+          ]
+        S3Key:
+          !Join [
+            "/",
+            [
+              !FindInMap ["SourceCode", "General", "KeyPrefix"],
+              "Create_Customer_Backup.zip",
+            ],
+          ]
+      TracingConfig:
+        Mode: Active
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W58
+          - reason: "Lambda IAM has permissions to write to Cloudwatch"
+          - id: W92
+          - reason: "Solution does not use concurrent executions"
+          - id: W89
+          - reason: "Solution does not require customer to have a VPC"
+  CreateCustomerManagedPatchFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: Function to create a native AWS patch window
+      FunctionName: customer-managed-patch
+      Handler: customer_managed_patch.lambda_handler
+      Environment:
+        Variables:
+          botoConfig: '{"user_agent_extra": "AwsSolution/SO0155/%%VERSION%%"}'
+          Tools_Account_Conf_Bucket: !Ref LambdaMainBucket
+          Tools_Account_Conf_Key: 'Account_Configuration/Account_Config.json'
+          Json_Template_S3_Key: 'JSON_Template/'
+          External_id: !Ref ExternalIamID
+      Runtime: python3.8
+      Tags:
+        - Key: Environment
+          Value: Development
+      Layers:
+        - !Ref "MyLayer"
+      Role: !GetAtt MainToolsRole.Arn
+      Timeout: 300
+      Code:
+        S3Bucket:
+          !Join [
+            "-",
+            [
+              !FindInMap ["SourceCode", "General", "S3Bucket"],
+              Ref: "AWS::Region",
+            ],
+          ]
+        S3Key:
+          !Join [
+            "/",
+            [
+              !FindInMap ["SourceCode", "General", "KeyPrefix"],
+              "Create_Customer_Patch.zip",
+            ],
+          ]
+      TracingConfig:
+        Mode: Active
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W58
+          - reason: "Lambda IAM has permissions to write to Cloudwatch"
+          - id: W92
+          - reason: "Solution does not use concurrent executions"
+          - id: W89
+          - reason: "Solution does not require customer to have a VPC"
+  RFCStepFunctionInstall:
+    Type: AWS::StepFunctions::StateMachine
+    DependsOn:
+      - MainOrchestratorFunction
+      - AMSCheckRFCFunction
+    Properties:
+      StateMachineName: "rfc-request-automation"
+      Tags:
+        - Key: Environment
+          Value: Development
+      DefinitionString: !Sub
+        - |-
+          {
+            "Comment": "An example of the Amazon States Language that runs  AWS Bath job and monitor the job until it completes.",
+            "StartAt": "Submit Job",
+            "States": {
+              "Submit Job": {
+                "Type": "Task",
+                "Resource": "${CreateRFClambdaArn}",
+                "ResultPath": "$.guid",
+                "Next": "Wait X Seconds"
+              },
+              "Wait X Seconds": {
+                "Type": "Wait",
+                "SecondsPath": "$.wait_time",
+                "Next": "Get Job Status"
+              },
+              "Get Job Status": {
+                "Type": "Task",
+                "Resource": "${AMSCheckRFCFunction.Arn}",
+                "Next": "Job Complete?",
+                "InputPath": "$.guid",
+                "ResultPath": "$.status"
+              },
+              "Job Complete?": {
+                "Type": "Choice",
+              "Choices": [
+                  {
+                  "Variable": "$.status",
+                  "StringEquals": "FAILED",
+                  "Next": "Job Failed"
+              },
+              {
+                  "Variable": "$.status",
+                  "StringEquals": "MANUAL",
+                  "Next": "Manual Job"
+              },
+              {
+                "Variable": "$.status",
+                "StringEquals": "SUCCEEDED",
+                "Next": "Get Final Job Status"
+                }
+                ],
+                  "Default": "Wait X Seconds"
+                },
+              "Job Failed": {
+                "Type": "Fail",
+                "Cause": "AWS Batch Job Failed",
+                "Error": "DescribeJob returned FAILED"
+               },
+              "Manual Job": {
+                "Type": "Task",
+                "Resource": "${AMSCheckRFCFunction.Arn}",
+              "InputPath": "$.guid",
+              "End": true
+                },
+              "Get Final Job Status": {
+                "Type": "Task",
+                "Resource": "${AMSCheckRFCFunction.Arn}",
+              "InputPath": "$.guid",
+              "End": true
+                }
+              }
+          }
+        - { CreateRFClambdaArn: !GetAtt [AMSCreateRFCFunction, Arn] }
+
+      RoleArn: !GetAtt MainToolsRole.Arn
+  ServiceRequestMachineInstall:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      StateMachineName: "service-request-automation"
+      Tags:
+        - Key: Environment
+          Value: Development
+      DefinitionString: !Sub
+        - |-
+          {
+            "Comment": "AMS Service Request Step Function",
+            "StartAt": "Submit Job",
+            "States": {
+              "Submit Job": {
+                "Type": "Task",
+                "Resource": "${lambdaArn}",
+                "End": true
+              }
+            }
+          }
+        - { lambdaArn: !GetAtt [AMSCreateSRFunction, Arn] }
+      RoleArn: !GetAtt MainToolsRole.Arn
+  CustomerManagedBackUpMachineInstall:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      StateMachineName: "customer-managed-backup"
+      Tags:
+        - Key: Environment
+          Value: Development
+      DefinitionString: !Sub
+        - |-
+          {
+          "Comment": "An example of the Amazon States Language that runs  AWS Bath job",
+          "StartAt": "Submit Job",
+          "States": {
+          "Submit Job": {
+            "Type": "Task",
+            "Resource": "${BackUplambdaArn}",
+            "End": true
+            }
+           }
+          }
+        - { BackUplambdaArn: !GetAtt [CustomerManagedBackUpFunction, Arn] }
+      RoleArn: !GetAtt MainToolsRole.Arn
+  CustomerManagedPatchMachineInstall:
+    Type: "AWS::StepFunctions::StateMachine"
+    Properties:
+      StateMachineName: "customer-managed-patch"
+      Tags:
+        - Key: Environment
+          Value: Development
+      DefinitionString: !Sub
+        - |-
+          {
+          "Comment": "An example of the Amazon States Language that runs  AWS Bath job",
+          "StartAt": "Submit Job",
+          "States": {
+          "Submit Job": {
+              "Type": "Task",
+              "Resource": "${PatchlambdaArn}",
+              "End": true
+              }
+            }
+            }
+        - { PatchlambdaArn: !GetAtt [CreateCustomerManagedPatchFunction, Arn] }
+      RoleArn: !GetAtt MainToolsRole.Arn

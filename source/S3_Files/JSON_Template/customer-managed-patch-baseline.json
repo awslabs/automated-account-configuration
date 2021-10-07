@@ -1,0 +1,33 @@
+{
+  "OperatingSystem": "WINDOWS",
+  "Name": "MyTestPatchBaseline",
+  "GlobalFilters": {
+    "PatchFilters": [
+      {
+        "Key": "PRODUCT",
+        "Values": [
+          "Windows7"
+        ]
+      }
+    ]
+  },
+  "ApprovalRules": {
+    "PatchRules": [
+      {
+        "PatchFilterGroup": {
+          "PatchFilters": [
+            {
+              "Key": "PRODUCT",
+              "Values": [
+                "Windows8"
+              ]
+            }
+          ]
+        },
+        "ComplianceLevel": "CRITICAL",
+        "ApproveUntilDate": "2021-12-30",
+        "EnableNonSecurity": false
+      }
+    ]
+  }
+}

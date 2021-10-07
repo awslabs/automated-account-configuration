@@ -1,0 +1,112 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: "(SO0123) - The AWS CloudFormation template for deployment of the AWS Automated Account Configuration Solution - step 2, (Version %%VERSION%%)"
+Parameters:
+  ToolsAccountMainRoleName:
+    Default: setup-tools-account-role
+    Description: The name of the main IAM Role deployed in Tools account to interact with application accounts. The default value is `setup-tools-account-role` .
+    Type: String
+  ToolsAccountID:
+    Default: Please enter tools account ID
+    Description: This is the number of the Tools account where main template was deployed.
+    Type: String
+  IAMPermissionsBoundary:
+    Type: String
+    Description: '(Optional) This is an IAM Permissions Boundary used with IAM Role created'
+  TrustExternalId:
+    Type: String
+    Default: 1234567890abcdef0
+    Description: This is the external ID used by when tools account assume permissions to Application accounts.
+Conditions:
+  HasIamPermissionsBoundary: !Not
+    - !Equals
+      - ''
+      - !Ref IAMPermissionsBoundary
+Resources:
+  ApplicationAccountRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ApplicationAccountRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub 'arn:aws:iam::${ToolsAccountID}:role/${ToolsAccountMainRoleName}'
+            Action: sts:AssumeRole
+            Condition:
+              StringEquals:
+                sts:ExternalId: !Ref TrustExternalId
+      PermissionsBoundary: !If
+        - HasIamPermissionsBoundary
+        - !Ref IAMPermissionsBoundary
+        - !Ref 'AWS::NoValue'
+      Policies:
+        - PolicyName: account-automation-ams-managed
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'amscm:*'
+                  - 'amsskms:*'
+                  - 'support:*'
+                Resource:
+                  - '*'
+        - PolicyName: account-automation-customer-managed-backup
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: 'backup:*'
+                Resource: '*'
+              - Effect: Allow
+                Action: 'backup-storage:*'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'tag:GetTagKeys'
+                  - 'tag:GetTagValues'
+                  - 'tag:GetResources'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'kms:ListKeys'
+                  - 'kms:DescribeKey'
+                  - 'kms:GenerateDataKey'
+                  - 'kms:ListAliases'
+                Resource: '*'
+        - PolicyName: account-automation-customer-managed-Patch
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'ssm:PutInventory'
+                  - 'ssm:PutInventory'
+                  - 'ssm:GetDeployablePatchSnapshotForInstance'
+                  - 'ssm:CreatePatchBaseline'
+                  - 'ssm:AddTagsToResource'
+                  - 'ssm:RegisterPatchBaselineForPatchGroup'
+                  - 'ssm:GetPatchBaseline'
+                Resource: '*'
+        - PolicyName: account-automation-pass-role
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - iam:PassRole
+                Resource: !Sub 'arn:aws:iam::${AWS::AccountId}:role/service-role/AWSBackupDefaultServiceRole'
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W11
+          - reason: "Role will require * to allow for creation of new resources"
+          - id: F3
+          - reason: "Role will require * to allow for creation of new resources"
+          - id: W28
+          - reason: "User can change username if needed"
+Outputs:
+  AppAccountRole:
+    Description: "Application account role"
+    Value: !GetAtt 'ApplicationAccountRole.Arn'

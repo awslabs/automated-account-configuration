@@ -1,0 +1,41 @@
+{
+  "app_accounts" : [ {
+    "<app-account-id>" : {
+      "app_acct_role" : "ApplicationAccountRole",
+      "ams_managed_list": [
+        {
+          "Key": "Service_Request",
+          "Exec_Params" : "Service_Request.json",
+          "Wait_Time": 60,
+          "Value": "Create Service Request"
+        },
+        {
+          "Key": "ct-0el2j07llrxs7",
+          "Exec_Params" : "ct-0el2j07llrxs7_Params.json",
+          "Wait_Time": 60,
+          "Value": "Create Patch Window - Note: to check latest value for key, please visit AWS Managed Services https://aws.amazon.com/managed-services/"
+        },{
+          "Key": "ct-2hyozbpa0sx0m",
+          "Exec_Params" : "ct-2hyozbpa0sx0m_Params.json",
+          "Wait_Time": 60,
+          "Value": "Create Default Backup Plan - Note: to check latest value for key, please visit AWS Managed Services https://aws.amazon.com/managed-services/"
+        }
+      ],
+      "customer_managed_list": [
+        {
+          "Key": "backup",
+          "Exec_Params" : "customer-managed-backup-default.json",
+          "Wait_Time": 60,
+          "Value": "Create backup Plan for customer managed stacks"
+        },
+        {
+          "Key": "patch",
+          "Exec_Params" : "customer-managed-patch-baseline.json",
+          "Wait_Time": 60,
+          "Value": "Create patch baseline for customer managed stacks"
+        }
+      ]
+    }
+  }
+  ]
+}

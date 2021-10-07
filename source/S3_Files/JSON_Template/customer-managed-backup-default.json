@@ -1,0 +1,18 @@
+{
+  "VpcId": "vpc_id",
+  "Description": "Bronnze Backup Plan" ,
+  "Parameters": {
+    "BackupPlanName": "Customer Managed Bronze Plan" ,
+    "ResourceTagKey": "RPO" ,
+    "ResourceTagValue": "CustomerManagedBronze" ,
+    "BackupRule1Name": "BronzeBackupRule1" ,
+    "BackupRule1Vault": "Customer-custom-backups" ,
+    "BackupRule1CompletionWindowMinutes": 180 ,
+    "BackupRule1DeleteAfterDays": 360 ,
+    "BackupRule1MoveToColdStorageAfterDays": 180 ,
+    "BackupRule1StartWindowMinutes": 60 ,
+    "BackupRule1RecoveryPointTagKey": "" ,
+    "BackupRule1RecoveryPointTagValue": "" ,
+    "BackupRule1ScheduleExpression": "cron(0 10 ? * * *)"
+  }
+}

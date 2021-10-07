@@ -1,0 +1,14 @@
+{
+  "Cutoff": 4,
+  "Description": "WindowsDevelopment",
+  "MaxConcurrency": "33%",
+  "MaxErrors": "100%",
+  "ScheduleTimeZone": "America/New_York",
+  "Duration": 6,
+  "Name": "WindowsDevelopment",
+  "NotificationEmails": [
+    "email"
+  ],
+  "PatchGroup": "myPatchGroup",
+  "Schedule": "cron(0 11 ? FEB,MAR,JUN,AUG,SEP,NOV,DEC 6#2 *)"
+}

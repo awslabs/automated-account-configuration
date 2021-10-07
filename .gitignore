@@ -1,0 +1,9 @@
+./source/Check_Status_Patch.py
+./deployment/global-s3-assets
+./deployment/open-source
+./deployment/regional-s3-assets
+.DS_Store
+.idea/*
+source/python/__pycache__/*
+.pytest_cache/
+source/.DS_Store

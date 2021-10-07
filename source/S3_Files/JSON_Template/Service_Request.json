@@ -1,0 +1,8 @@
+{
+  "subject" : "Request to <request-details-here> to AWS Managed Service",
+  "serviceCode": "sentinel-service-request",
+  "severityCode": "normal",
+  "categoryCode": "feature-request",
+  "communicationBody" :"Request to <request-details-here> to AWS Managed Service",
+  "ccEmailAddresses" : "email"
+}
