@@ -3,8 +3,6 @@ The Automated account configuration is a sample solution to enable operational s
 steps required before AWS accounts are used for customer workloads. Steps include setting up backups and patching for the 
 resources within the account. 
 
-For more information about implementing the solution, please visit the AWS Prescriptive Guidance < https://amazon.awsapps.com/workdocs/index.html#/document/fae9e33e939379e2119848b01b9017251758da6919e705ea55d8d461c0b7ab08>
-
 ## Disclaimer
 This solution collects anonymous operational metrics to help AWS improve the quality of features of the solution. For more information, including how to disable this capability, please see the [implementation guide](https://docs.aws.amazon.com/solutions/latest/<solution-trademark-name>/collection-of-operational-metrics.html).
 
