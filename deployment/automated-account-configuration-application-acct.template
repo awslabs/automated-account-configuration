@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: "(SO0123) - The AWS CloudFormation template for deployment of the AWS Automated Account Configuration Solution - step 2, (Version %%VERSION%%)"
+Description: "(SO0155-step-2) - The AWS CloudFormation template for deployment of the AWS Automated Account Configuration Solution - step 2, (Version %%VERSION%%)"
 Parameters:
   ToolsAccountMainRoleName:
     Default: setup-tools-account-role

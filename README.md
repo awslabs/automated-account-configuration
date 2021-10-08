@@ -3,11 +3,14 @@ The Automated account configuration is a sample solution to enable operational s
 steps required before AWS accounts are used for customer workloads. Steps include setting up backups and patching for the 
 resources within the account. 
 
-## Disclaimer
-This solution collects anonymous operational metrics to help AWS improve the quality of features of the solution. For more information, including how to disable this capability, please see the [implementation guide](https://docs.aws.amazon.com/solutions/latest/<solution-trademark-name>/collection-of-operational-metrics.html).
+## On this Page
+-   [Deployment](#deployment)
+-   [Source Code](#source-code)
 
-## File Structure
+## Deployment
+The solution is deployed using a CloudFormation template, for a detailed solution deployment guide, refer to [implementation guide](https://aws.amazon.com/solutions/implementations/automated-account-configuration/).
 
+## Source-code
 ```
 |-deployment/
   |-build-s3-dist.sh                                              [ shell script for packaging distribution assets ]
@@ -36,6 +39,9 @@ This solution collects anonymous operational metrics to help AWS improve the qua
   |-customer_managed_patch.py                                     [ Lambda function to create a native AWS default patch window]
 ```
 
-Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
+## Disclaimer
+This solution collects anonymous operational metrics to help AWS improve the quality of features of the solution. For more information, including how to disable this capability, please see the [implementation guide](https://docs.aws.amazon.com/solutions/latest/automated-account-configuration/collection-of-operational-metrics.html).
+
+Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 Licensed under the the MIT-0 License. See the LICENSE file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions and limitations under the License.

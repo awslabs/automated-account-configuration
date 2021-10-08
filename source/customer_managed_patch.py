@@ -68,7 +68,7 @@ def lambda_handler(event, context):
     if patch_plan_id =="Base_AWS_Patch":
         try:
             member_account_session = get_session(
-            str(ams_app_id), str(app_acct_role), "customer_managed_patch",ExternalId
+                str(ams_app_id), str(app_acct_role), "customer_managed_patch",ExternalId
             )
 
             cfhandler = member_account_session.client("ssm")

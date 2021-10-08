@@ -123,8 +123,8 @@ def lambda_handler(event, context):
                         'ConditionValue': ResourceTagValue
                     },
                 ]
-             }
-            )
+            }
+        )
 
         return {'planId': NewPlanId}
     except Exception as backup_plan_create_failure:
