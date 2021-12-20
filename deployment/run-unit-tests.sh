@@ -7,4 +7,16 @@
 # ./run-unit-tests.sh
 #
 
-echo "No unit tests to run"
+source_template_dir="$PWD"
+source_code_dir="../source"
+unit_test_dir="$source_code_dir/unit_tests"
+
+
+# enter the main test directory
+cd $unit_test_dir
+
+# Run all tests int he directory
+py.test
+
+
+

@@ -24,8 +24,6 @@ import os
 from get_auth import (
     get_session
 )
-from Utilities import(
-    read_configuration_value)
 
 from botocore import config
 solution_identifier = json.loads(os.environ['botoConfig'])

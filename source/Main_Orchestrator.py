@@ -28,8 +28,7 @@ import random
 
 # Import Lambda layer functions
 from Utilities import(
-    validate_config_input,
-    read_configuration_value)
+    validate_config_input)
 
 # Record solution usage
 from botocore import config

@@ -58,6 +58,3 @@ def get_session(account_id, role_name, session_name,external_id):
     temp_session = get_session_with_arn(
         "arn:aws:iam::{}:role/{}".format(account_id, role_name), session_name, external_id, None)
     return(temp_session)
-
-
-

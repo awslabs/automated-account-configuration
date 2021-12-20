@@ -35,9 +35,6 @@ from get_auth import (
     get_session
 )
 
-from Utilities import(
-    validate_config_input,
-    read_configuration_value)
 
 try:
     # Download the initial configuration JSON file for the account, these values are set when creating temp.yaml

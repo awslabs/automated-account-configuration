@@ -15,34 +15,24 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE        #
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                                #
 #########################################################################################
+import pytest
+from source.python.Utilities import validate_config_input
 
-import re
-# Function to validate inputs against a regular expression and length inputs
+@pytest.mark.parametrize("inputKey, regex, lb, ub,ValidoutPut",[
+    #positive smoke test
+    ("smokevalidtest","^[A-Za-z0-9-:_]{1,1000}$",1,1000,True)
+])
+def test_valid_config_validation(inputKey,regex, lb, ub,ValidoutPut):
+    assert validate_config_input (inputKey,regex, lb, ub) == ValidoutPut
 
-def validate_config_input(inputKey, regex, lb, ub):
-    inputType = type(inputKey)
-    if inputType == int:
-        #skip length check and just match the pattern
-        return re.match(regex,inputKey) is not None
-    elif inputType== str:
-        if len(inputKey) <= lb or len(inputKey) > ub:
-            return False
-    # Match returns none if pattern not found
-    else:
-        return "unknown input type"
-    return re.match(regex, inputKey) is not None
+@pytest.mark.parametrize("inputKey, regex, lb, ub,InvalidoutPut",[
+    #negative testing length checks, lb
+    ("","^[A-Za-z0-9-:_]{1,1000}$",1,1,False),
+    #negative testing length checks, ub
+    ("Morethan10characterslong","^[A-Za-z0-9-:_]{1,10}$",1,1,False),
+    #negative, Testing reg expression check
+    ("Somestringwith+","^[A-Za-z0-9-:_]{1,100}$",1,1,False)
+])
+def test_Invalid_config_validation(inputKey,regex, lb, ub,InvalidoutPut):
+    assert validate_config_input (inputKey,regex, lb, ub) == InvalidoutPut
 
-
-# fucntion to read configurations from a ini configuration file
-# def read_configuration_value(configfile,SectionName, RequestedParam):
-#     try:
-#         from configparser import ConfigParser
-#     except ImportError:
-#         print("error importing required library for reading configurations")
-#
-#     # instantiate
-#     config = ConfigParser()
-#
-#     # parse existing file
-#     config.read(configfile)
-#     return config.get(SectionName, RequestedParam)

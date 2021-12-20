@@ -15,34 +15,20 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE        #
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                                #
 #########################################################################################
-
-import re
-# Function to validate inputs against a regular expression and length inputs
-
-def validate_config_input(inputKey, regex, lb, ub):
-    inputType = type(inputKey)
-    if inputType == int:
-        #skip length check and just match the pattern
-        return re.match(regex,inputKey) is not None
-    elif inputType== str:
-        if len(inputKey) <= lb or len(inputKey) > ub:
-            return False
-    # Match returns none if pattern not found
-    else:
-        return "unknown input type"
-    return re.match(regex, inputKey) is not None
+import pytest
+from source.python.get_auth import handle_session_name_length
 
 
-# fucntion to read configurations from a ini configuration file
-# def read_configuration_value(configfile,SectionName, RequestedParam):
-#     try:
-#         from configparser import ConfigParser
-#     except ImportError:
-#         print("error importing required library for reading configurations")
-#
-#     # instantiate
-#     config = ConfigParser()
-#
-#     # parse existing file
-#     config.read(configfile)
-#     return config.get(SectionName, RequestedParam)
+@pytest.fixture
+def mock_external_id():
+    return 12345678910
+
+@pytest.fixture
+def mock_session_name():
+    return "my_test_session"
+
+@pytest.mark.parametrize("sessionName,ValidoutPut",[
+    ("my-test-session","my-test-session")
+])
+def test_valid_session_name(sessionName,ValidoutPut):
+    assert handle_session_name_length(sessionName) == ValidoutPut
