@@ -1,3 +1,7 @@
+# Deprecation Notice
+
+This AWS Solution has been archived and is no longer maintained by AWS. To discover other solutions, please visit the [AWS Solutions Library](https://aws.amazon.com/solutions/).
+
 # automated-account-configuration
 The Automated account configuration is a sample solution to enable operational scale for AWS customers by automating repeatable
 steps required before AWS accounts are used for customer workloads. Steps include setting up backups and patching for the
